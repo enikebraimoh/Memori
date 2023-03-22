@@ -23,22 +23,6 @@ import com.stevdzasan.onetap.OneTapSignInState
 import com.stevdzasan.onetap.OneTapSignInWithGoogle
 import java.lang.Exception
 
-@Composable
-fun AuthenticationRoute(
-    loadingState: Boolean,
-    onButtonClicked: () -> Unit,
-    googleAuthState: OneTapSignInState,
-    messageBarState: MessageBarState
-) {
-    AuthenticationScreen(
-        loadingState = loadingState,
-        onButtonClicked = onButtonClicked,
-        googleAuthState = googleAuthState,
-        messageBarState = messageBarState
-    )
-}
-
-
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,71 +30,77 @@ fun AuthenticationScreen(
     loadingState: Boolean,
     onButtonClicked: () -> Unit,
     googleAuthState: OneTapSignInState,
-    messageBarState: MessageBarState
+    messageBarState: MessageBarState,
+    onTokenIdRecieved: (String) -> Unit,
+    onDialogDismissed: (String) -> Unit
 ) {
     Scaffold(
         content = {
             ContentWithMessageBar(messageBarState = messageBarState) {
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .weight(9f)
-                            .fillMaxWidth()
-                            .padding(all = 40.dp),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Column(
-                            modifier = Modifier.weight(weight = 10f),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Image(
-                                modifier = Modifier.size(120.dp),
-                                painter = painterResource(id = R.drawable.google_logo),
-                                contentDescription = "Google Logo"
-                            )
-                            Spacer(modifier = Modifier.height(20.dp))
-                            Text(
-                                text = stringResource(R.string.auth_title),
-                                fontSize = MaterialTheme.typography.titleLarge.fontSize
-                            )
-                            Text(
-                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
-                                text = stringResource(id = R.string.auth_subtitle),
-                                fontSize = MaterialTheme.typography.bodyMedium.fontSize
-                            )
-                        }
-                        Column(
-                            modifier = Modifier.weight(weight = 2f),
-                            verticalArrangement = Arrangement.Bottom
-                        ) {
-                            GoogleButton(
-                                loadingState = loadingState,
-                                onClick = onButtonClicked
-                            )
-                        }
-                    }
-                }
+                AuthenticationContent(
+                    loadingState = loadingState,
+                    onButtonClicked = onButtonClicked,
+                )
             }
         }
     )
     OneTapSignInWithGoogle(
         state = googleAuthState,
         clientId = CLIENT_ID,
-        onTokenIdReceived = { message ->
-            messageBarState.addSuccess("Successfully Authenticated")
-            Log.d("Auth",message)
-        },
-        onDialogDismissed = { errorMessage ->
-            messageBarState.addError(
-                Exception(errorMessage)
-            )
-
-            Log.d("Auth",errorMessage)
-        }
+        onTokenIdReceived = onTokenIdRecieved,
+        onDialogDismissed = onDialogDismissed
     )
+}
+
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AuthenticationContent(
+    loadingState: Boolean,
+    onButtonClicked: () -> Unit,
+) {
+    Column(
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Column(
+            modifier = Modifier
+                .weight(9f)
+                .fillMaxWidth()
+                .padding(all = 40.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Column(
+                modifier = Modifier.weight(weight = 10f),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Image(
+                    modifier = Modifier.size(120.dp),
+                    painter = painterResource(id = R.drawable.google_logo),
+                    contentDescription = "Google Logo"
+                )
+                Spacer(modifier = Modifier.height(20.dp))
+                Text(
+                    text = stringResource(R.string.auth_title),
+                    fontSize = MaterialTheme.typography.titleLarge.fontSize
+                )
+                Text(
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
+                    text = stringResource(id = R.string.auth_subtitle),
+                    fontSize = MaterialTheme.typography.bodyMedium.fontSize
+                )
+            }
+            Column(
+                modifier = Modifier.weight(weight = 2f),
+                verticalArrangement = Arrangement.Bottom
+            ) {
+                GoogleButton(
+                    loadingState = loadingState,
+                    onClick = onButtonClicked
+                )
+            }
+        }
+    }
 }
