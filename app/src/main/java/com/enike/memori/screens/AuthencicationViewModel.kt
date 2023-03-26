@@ -29,10 +29,7 @@ class AuthencicationViewModel : ViewModel() {
             try {
                 val result = withContext(Dispatchers.IO) {
                     App.create(APP_ID).login(
-                        credentials = Credentials.google(
-                            token = token,
-                            type = GoogleAuthType.ID_TOKEN
-                        )
+                        credentials = Credentials.jwt(jwtToken = token)
                     )
                 }
                 withContext(Dispatchers.Main) {
@@ -45,6 +42,4 @@ class AuthencicationViewModel : ViewModel() {
             }
         }
     }
-
-
 }
