@@ -15,6 +15,8 @@ import androidx.navigation.compose.rememberNavController
 import com.enike.memori.navigation.Screen
 import com.enike.memori.navigation.SetUpNavigationGraph
 import com.enike.memori.ui.theme.MemoriTheme
+import com.enike.memori.utils.Constants.APP_ID
+import io.realm.kotlin.mongodb.App
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,10 +26,18 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             MemoriTheme {
                 SetUpNavigationGraph(
-                    startDestination = Screen.Authentication.route,
+                    startDestination = getStartDestination(),
                     navController = navController
                 )
             }
         }
+    }
+}
+
+fun getStartDestination(): String {
+    return if (App.create(APP_ID).currentUser != null) {
+        Screen.Home.route
+    } else {
+        Screen.Authentication.route
     }
 }

@@ -45,7 +45,6 @@ fun NavGraphBuilder.authenticationRoute() {
                     token,
                     onSuccess = {
                         messageBarState.addSuccess("Successfully Authenticated")
-                        Log.d("Auth Success", token)
                     },
                     onError = { errorMessage ->
                         messageBarState.addError(
@@ -55,10 +54,10 @@ fun NavGraphBuilder.authenticationRoute() {
                 )
             },
             onDialogDismissed = { errorMessage ->
+                Log.d("Error", errorMessage)
                 messageBarState.addError(
                     Exception(errorMessage)
                 )
-                Log.d("Error", errorMessage)
             }
         )
     }
