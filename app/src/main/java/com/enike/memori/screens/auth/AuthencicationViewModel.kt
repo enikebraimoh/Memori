@@ -1,4 +1,4 @@
-package com.enike.memori.screens
+package com.enike.memori.screens.auth
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -8,12 +8,16 @@ import io.realm.kotlin.mongodb.App
 import io.realm.kotlin.mongodb.Credentials
 import io.realm.kotlin.mongodb.GoogleAuthType
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class AuthencicationViewModel : ViewModel() {
 
     var isLoading = mutableStateOf(false)
+        private set
+
+    var isAuthenticated = mutableStateOf(false)
         private set
 
     fun setLoadingState(state: Boolean) {
@@ -34,6 +38,8 @@ class AuthencicationViewModel : ViewModel() {
                 }
                 withContext(Dispatchers.Main) {
                     onSuccess()
+                    delay(600)
+                    isAuthenticated.value = true
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {

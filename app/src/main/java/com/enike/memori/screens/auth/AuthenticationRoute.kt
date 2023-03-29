@@ -1,34 +1,35 @@
-package com.enike.memori.screens
+package com.enike.memori.screens.auth
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.enike.memori.R
 import com.enike.memori.components.GoogleButton
-import com.enike.memori.utils.Constants.CLIENT_ID
 import com.enike.memori.utils.Constants.WEB_CLIENT_ID
 import com.stevdzasan.messagebar.ContentWithMessageBar
 import com.stevdzasan.messagebar.MessageBarState
 import com.stevdzasan.onetap.OneTapSignInState
 import com.stevdzasan.onetap.OneTapSignInWithGoogle
-import java.lang.Exception
+
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AuthenticationScreen(
     loadingState: Boolean,
+    isAuthencicated: Boolean,
+    navigateToHome: () -> Unit,
     onButtonClicked: () -> Unit,
     googleAuthState: OneTapSignInState,
     messageBarState: MessageBarState,
@@ -36,6 +37,10 @@ fun AuthenticationScreen(
     onDialogDismissed: (String) -> Unit
 ) {
     Scaffold(
+        modifier = Modifier
+            .background(MaterialTheme.colorScheme.background)
+            .statusBarsPadding()
+            .navigationBarsPadding(),
         content = {
             ContentWithMessageBar(messageBarState = messageBarState) {
                 AuthenticationContent(
@@ -51,6 +56,10 @@ fun AuthenticationScreen(
         onTokenIdReceived = onTokenIdRecieved,
         onDialogDismissed = onDialogDismissed
     )
+
+    LaunchedEffect(key1 = isAuthencicated) {
+        if (isAuthencicated) navigateToHome()
+    }
 }
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
