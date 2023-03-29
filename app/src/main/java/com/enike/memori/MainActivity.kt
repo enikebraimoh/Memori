@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
 import com.enike.memori.navigation.Screen
 import com.enike.memori.navigation.SetUpNavigationGraph
@@ -21,12 +22,13 @@ import io.realm.kotlin.mongodb.App
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         installSplashScreen()
         setContent {
             val navController = rememberNavController()
             MemoriTheme {
                 SetUpNavigationGraph(
-                    startDestination = getStartDestination(),
+                    startDestination =  getStartDestination(),
                     navController = navController
                 )
             }
@@ -34,10 +36,8 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-fun getStartDestination(): String {
-    return if (App.create(APP_ID).currentUser != null) {
-        Screen.Home.route
-    } else {
-        Screen.Authentication.route
-    }
+private fun getStartDestination(): String {
+    val user = App.create(APP_ID).currentUser
+    return if (user != null && user.loggedIn) Screen.Home.route
+    else Screen.Authentication.route
 }
